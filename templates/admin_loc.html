@@ -1,0 +1,171 @@
+{% extends "admin_layout.html" %}
+
+{% block mapscript %}
+<script type="module" src="/static/admin_map_loc_edit.js"></script>
+{% endblock %}
+
+{% block main %}
+
+<div class="container-bottom-map" id="map" 
+    map-lat="{{ get_admin_loc_info.loc_view_lat}}"
+    map-lng="{{ get_admin_loc_info.loc_view_lng }}" 
+    map-lat-offset="{{ loc_lat_game_offset }}" 
+    map-polygon="{{ get_admin_loc_polygon }}"  
+    map-zoom="18">
+
+    <script>(g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })
+            ({ key: "{{ map_api_key }}", v: "beta" });</script>
+
+</div>
+
+<div class="container-bottom-image-main">
+
+    <div class="container-bottom-image-top">
+        <div class="container-bottom-image-top-left">
+            Location ID: {{ get_admin_loc_info.id }}<br>
+            {{ get_admin_loc_info.loc_city }}, {{ get_admin_loc_info.loc_state }} {{ get_admin_loc_info.loc_country }}
+        </div>
+        <div class="container-bottom-image-top-right" style="display: flex; flex-direction: column; align-items: flex-end;">
+            {% if get_admin_loc_info.loc_game %}
+                <div>Not Available</div>
+                <div>Already in {{ get_admin_loc_info.loc_game|capitalize}}</div>
+            {% else %}
+                <div>Available</div>
+                {% if get_admin_loc_info.loc_playable %}
+                <div>
+                    <form name="get_loc_added" action="/admin/loc" method="post">
+                        <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                        <input type="hidden" name="bttn" class="hidden-field" value="admin_loc_add_geofinder"></input>                        
+                        <input type="hidden" id="loc-id" name="loc-id" class="hidden-field" value="{{ get_admin_loc_info.id }}"></input>
+                        <button name="router" class="bttn bttn-xsmall bttn-naked" type="submit">( Add to Geofinder )</button>
+                    </form>
+                </div>
+                {% else %}
+                <div style="color: #ff5645;">Not Playable</div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <img src="{{ get_admin_loc_info.loc_image_source }}" width="400px"><br>
+
+    <div class="container-bottom-image-source">
+        <a href="{{ get_admin_loc_info.loc_url_source }}" target="_blank" rel="noopener noreferrer">source</a>
+    </div>
+    
+    <div class="container-bottom-image-source" style="padding-bottom: 14px; display: flex; flex-direction: row; align-items: flex-end;">
+
+        <div class="container-bottom-image-top-left" style="display: flex; flex-direction: column; align-items: flex-start;">
+
+            <div style="display: flex; align-items: center;">
+
+                {% if not get_admin_loc_info.loc_removed %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px;">
+                        where_to_vote
+                    </span>
+                {% else %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px; color: #ff5645;">
+                        location_off
+                    </span>
+                {% endif %} 
+                Is Not Removed
+
+            </div>
+            <div style="display: flex; align-items: center;">
+
+                {% if get_admin_loc_info.loc_url_valid %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px;">
+                        where_to_vote
+                    </span>
+                {% else %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px; color: #ff5645;">
+                        location_off
+                    </span>
+                {% endif %} 
+                Is Active
+
+            </div>
+
+        </div>
+        <div class="container-bottom-image-top-right" style="display: flex; flex-direction: column; align-items: flex-start;">
+
+            <div style="display: flex; align-items: center;">
+
+                {% if get_admin_loc_info.loc_image_valid %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px;">
+                        where_to_vote
+                    </span>
+                {% else %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px; color: #ff5645;">
+                        location_off
+                    </span>
+                {% endif %} 
+                Has Image
+
+            </div>
+            <div style="display: flex; align-items: center;">
+
+                {% if get_admin_loc_info.loc_key_shp_valid %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px;">
+                        where_to_vote
+                    </span>
+                {% else %}
+                    <span class="material-symbols-outlined" style="padding-right: 4px; font-size: 20px; color: #ff5645;">
+                        location_off
+                    </span>
+                {% endif %} 
+                Has Valid Key
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="container-bottom-image-buttons">
+        <div class="container-bottom-image-buttons-left">
+            <div class="container-bottom-image-buttons-new">
+                <form name="get_loc_shp_edited" action="/admin/loc" method="post">
+                    <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                    <input type="hidden" name="bttn" class="hidden-field" value="admin_loc_save"></input>
+                    <input type="hidden" id="loc-id" name="loc-id" class="hidden-field_save" value="{{ get_admin_loc_info.id }}"></input>
+                    <input type="hidden" id="propertyCoordinates" name="propertyCoordinates" class="hidden-field"></input>
+                    <button name="router" class="bttn bttn-small bttn-admin" type="submit">Save Key Edit</button>
+                </form>
+
+            </div>
+            <div class="container-bottom-image-buttons-stop">
+                <form name="get_loc_shp_undo" action="/admin/loc" method="post">
+                    <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                    <input type="hidden" name="bttn" class="hidden-field" value="admin_loc_undo"></input>
+                    <input type="hidden" id="loc-edit" name="loc-edit" class="hidden-field" value="{{ get_admin_loc_info.id }}"></input>
+                    <button name="router" class="bttn bttn-small bttn-naked" type="undo">Undo</button>
+                </form>
+            </div>
+        </div> 
+        <div class="container-bottom-image-buttons-right">
+            <div class="container-bottom-image-buttons-quit">
+                {% if requester == "admin_main" %}
+                    {% set bttn = "admin_main" %}
+                    {% set text = "Main" %}
+                {% elif requester == "admin_geofinder" %}
+                    {% set bttn = "admin_geofinder" %}
+                    {% set text = "Geofinder" %}
+                {% elif requester == "admin_fifty" %}
+                    {% set bttn = "admin_fifty" %}
+                    {% set text = "Geo50x" %}
+                {% else %}
+                    {% set bttn = "{{ active }}" %}
+                    {% set text = "Locations" %}
+                {% endif %}
+                <form name="go-back" action="/admin/loc" method="post">
+                    <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                    <input type="hidden" name="bttn" class="hidden-field" value="{{ bttn }}"></input>
+                    <button name="router" class="bttn bttn-xsmall bttn-naked" type="go-back">Back to {{ text }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

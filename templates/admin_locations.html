@@ -1,0 +1,360 @@
+{% extends "admin_layout.html" %}
+
+{% block mapscript %}
+<script type="module" src="/static/admin_map_general.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+{% endblock %}
+
+{% block main %}
+
+<div class="container-bottom-map" id="map" map-lat="41.85732" map-lng="-87.778546" map-zoom="17">
+
+    <script>(g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })
+            ({ key: "{{ map_api_key }}", v: "beta" });</script>
+
+</div>
+
+<div class="container-bottom-general-main">
+
+    <div class="container-bottom-general-top">
+    </div>
+
+    <div class="container-bottom-general-bottom">
+
+        <!-- General Content -->
+        <div class="container-bottom-general-content">
+
+            <!-- Page -->
+            <div class="pages">
+
+                <!-- Page - Breadcrumb -->
+                <div class="pages-breadcrumb">
+
+                    <form name="submit" action="/" method="post">
+                        <input type="hidden" name="page" class="hidden-field" value="{{ page }}"></input>
+                        <input type="hidden" name="bttn" class="hidden-field" value="admin_main"></input>
+                        <button name="history" class="bttn bttn-xsmall bttn-naked" type="submit">Admin</button>
+                    </form>
+
+                    <form>
+                        <button class="bttn bttn-separator" type="submit" disabled>/</button>
+                    </form>
+
+                    <form name="submit" action="/" method="post">
+                        <input type="hidden" name="page" class="hidden-field" value="{{ page }}"></input>
+                        <input type="hidden" name="bttn" class="hidden-field" value="admin_main"></input>
+                        <button name="history" class="bttn bttn-xsmall bttn-naked" type="submit">Main</button>
+                    </form>
+
+                    <form>
+                        <button class="bttn bttn-separator" type="submit" disabled>/</button>
+                    </form>
+
+                    <form name="submit" action="/" method="post">
+                        <input type="hidden" name="page" class="hidden-field" value="{{ page }}"></input>
+                        <input type="hidden" name="bttn" class="hidden-field" value="admin_locations"></input>
+                        <button name="history" class="bttn bttn-xsmall bttn-naked" type="submit">Locations</button>
+                    </form>
+
+                </div>
+                
+                <!-- Page - Title -->
+                <div class="pages-title">
+
+                    <div class="pages-title-left">
+                        Locations
+                    </div>
+
+                    <div class="pages-title-right">
+
+                        <form name="refresh" action="/admin/locations" method="post">
+                            <div class="pages-profile-head-right-item" style="padding-left: 10px; display: flex; flex-direction: row; align-items: center;">
+                                <div>
+                                    <input autocomplete="off" class="form-control form-control-sm" style="min-height: 10px; line-height: 1 !important;" id="url" name="url" type="text" required></input>
+                                </div>
+                                <div style="padding: 0 30px 0 10px">
+                                    <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                                    <input type="hidden" name="bttn" class="hidden-field" value="admin_locations_add"></input>
+                                    <button class="bttn bttn-small bttn-admin" type="submit">Add Loc</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="pages-profile-head-right-item" style="padding-left: 10px;">
+                            <form name="refresh" action="/admin/locations" method="post">
+                                <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                                <input type="hidden" name="bttn" class="hidden-field" value="admin_locations_validated"></input>
+                                <button class="bttn bttn-small bttn-admin" type="submit">Update Locations Status</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Page - Content - ADMIN - Main - LOCATIONS -->
+                <div class="pages-content">
+                    
+                    <!-- Page - Content - ADMIN - Header - LOCATIONS -->
+                    <div class="pages-content-header">
+
+                        <!-- Total Locations -->
+                        <div class="pages-content-header-item">
+                            <form name="submit" action="/admin/locations" method="post">
+                                <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                                <input type="hidden" name="bttn" class="hidden-field" value="admin_locations_all"></input>
+                                <button name="history" class="bttn bttn-small bttn-naked" type="submit">
+                                    <!-- Item - Icon -->
+                                    <div class="pages-content-header-item-icon">
+                                        <span class="material-symbols-outlined" style="font-size: 46px;">
+                                            home_pin
+                                        </span>
+                                    </div>
+                                    <!-- Item - Info -->
+                                    <div class="pages-content-header-item-info">
+                                        <!-- Item - Info - Value -->
+                                        <div class="pages-content-header-item-info-value">
+                                            {{ get_admin_locations_content_all|length }}
+                                        </div>
+                                        <!-- Item - Info - Label -->
+                                        <div class="pages-content-header-item-info-label">
+                                            Total Locations
+                                        </div>                              
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Total Available -->
+                        <div class="pages-content-header-item">
+                            <form name="submit" action="/admin/locations" method="post">
+                                <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                                <input type="hidden" name="bttn" class="hidden-field" value="admin_locations_avail"></input>
+                                <button name="history" class="bttn bttn-small bttn-naked" type="submit">
+                                    <!-- Item - Icon -->
+                                    <div class="pages-content-header-item-icon">
+                                        <span class="material-symbols-outlined" style="font-size: 46px;">
+                                            location_on
+                                        </span>
+                                    </div>
+                                    <!-- Item - Info -->
+                                    <div class="pages-content-header-item-info">
+                                        <!-- Item - Info - Value -->
+                                        <div class="pages-content-header-item-info-value">
+                                            {{ get_admin_locations_content_avail|length }}
+                                        </div>
+                                        <!-- Item - Info - Label -->
+                                        <div class="pages-content-header-item-info-label">
+                                            Total Available
+                                        </div>
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Total Playable -->
+                        <div class="pages-content-header-item">
+                            <form name="submit" action="/admin/locations" method="post">
+                                <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                                <input type="hidden" name="bttn" class="hidden-field" value="admin_locations_avail_play"></input>
+                                <button name="history" class="bttn bttn-small bttn-naked" type="submit">
+                                    <!-- Item - Icon -->
+                                    <div class="pages-content-header-item-icon">
+                                        <span class="material-symbols-outlined" style="font-size: 46px;">
+                                            add_location_alt
+                                        </span>
+                                    </div>
+                                    <!-- Item - Info -->
+                                    <div class="pages-content-header-item-info">
+                                        <!-- Item - Info - Value -->
+                                        <div class="pages-content-header-item-info-value">
+                                            {{ get_admin_locations_content_avail_play|length }}
+                                        </div>
+                                        <!-- Item - Info - Label -->
+                                        <div class="pages-content-header-item-info-label">
+                                            Total Playable
+                                        </div>
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Total Not Playable -->
+                        <div class="pages-content-header-item">
+                            <form name="submit" action="/admin/locations" method="post">
+                                <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                                <input type="hidden" name="bttn" class="hidden-field" value="admin_locations_avail_notplay"></input>
+                                <button name="history" class="bttn bttn-small bttn-naked" type="submit">
+                                    <!-- Item - Icon -->
+                                    <div class="pages-content-header-item-icon">
+                                        <span class="material-symbols-outlined" style="font-size: 46px;">
+                                            wrong_location
+                                        </span>
+                                    </div>
+                                    <!-- Item - Info -->
+                                    <div class="pages-content-header-item-info">
+                                        <!-- Item - Info - Value -->
+                                        <div class="pages-content-header-item-info-value">
+                                            {{ get_admin_locations_content_avail_notplay|length }}
+                                        </div>
+                                        <!-- Item - Info - Label -->
+                                        <div class="pages-content-header-item-info-label">
+                                            Total Not Playable
+                                        </div>
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Page - Content - ADMIN - Content - LOCATIONS -->
+                    <div class="pages-profile-content" style="padding: 0 !important;">
+
+                        {% if get_admin_locations_content|length > 0 %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-start">Loc ID</th>
+                                    <th class="text-start">Search Area</th>
+                                    <th class="text-start">Is Taken</th>
+                                    <th class="text-start">Source</th>
+                                    <th class="text-start-center">Status</th>
+                                    <th class="text-start-center">Is Not Removed</th>
+                                    <th class="text-start-center">Is Active</th>
+                                    <th class="text-start-center">Has Image</th>
+                                    <th class="text-start-center">Has Valid Key</th>
+                                    <th class="text-start"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {%- for c in get_admin_locations_content %}
+                                <tr>
+                                    <td class="text-start">{{ c.id }}</td>
+                                    <td class="text-start">{{ c.loc_city }}, {{ c.loc_state }} {{ c.loc_country }}</td>
+                                    <td class="text-start">
+                                        {% if c.loc_game %}
+                                            {{ c.loc_game|capitalize}}
+                                        {% else %}
+                                            --
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-start"><a href="{{ c.loc_url_source }}" target="_blank" rel="noopener noreferrer">link</a></td>
+                                    <!-- Is Playable -->
+                                    <td class="text-start-center">
+                                        {% if c.loc_playable == True %}
+                                        OK
+                                        {% else %}
+                                        <span style="color: #ff5645 !important;">NOT OK</a>
+                                        {% endif %}
+                                    </td>
+                                    <!-- Is Removed -->
+                                    <td class="text-start-center">
+                                        {% if c.loc_removed == False %}
+                                        yes
+                                        {% else %}
+                                        <span style="color: #ff5645 !important;">NO</a>
+                                        {% endif %}
+                                    </td>
+                                    <!-- Is Active -->
+                                    <td class="text-start-center">
+                                        {% if c.loc_url_valid == True %}
+                                        yes
+                                        {% else %}
+                                        <span style="color: #ff5645 !important;">NO</a>
+                                        {% endif %}
+                                    </td>
+                                    <!-- Has Image -->
+                                    <td class="text-start-center">
+                                        {% if c.loc_image_valid == True %}
+                                        yes
+                                        {% else %}
+                                        <span style="color: #ff5645 !important;">NO</a>
+                                        {% endif %}
+                                    </td>
+                                    <!-- Has Shapefile -->
+                                    <td class="text-start-center">
+                                        {% if c.loc_key_shp %}
+                                        yes
+                                        {% else %}
+                                        <span style="color: #ff5645 !important;">NO</a>
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td class="text-start-center">
+                                        <form name="router" action="/admin/locations" method="post">
+                                            <input type="hidden" name="active" class="hidden-field" value="{{ active }}"></input>
+                                            <input type="hidden" name="bttn" class="hidden-field" value="admin_loc"></input>
+                                            <input type="hidden" name="loc-edit" class="hidden-field" value="{{ c.id }}"></input>
+                                            <button class="bttn bttn-xsmall bttn-admin" type="submit">
+                                                view/edit
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td class="border-0" colspan="10">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        {% else %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-start">Loc ID</th>
+                                    <th class="text-start">Search Area</th>
+                                    <th class="text-start">Is Taken</th>
+                                    <th class="text-start">Source</th>
+                                    <th class="text-start-center">Is Playable<sup>1</sup></th>
+                                    <th class="text-start-center">Is Removed<sup>a</sup></th>
+                                    <th class="text-start-center">Is Active<sup>b</sup></th>
+                                    <th class="text-start-center">Has Image<sup>c</sup></th>
+                                    <th class="text-start-center">Has Valid Key<sup>d</sup></th>
+                                    <th class="text-start"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="container-bottom-history-message">
+                            <br>
+                            No locations
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+            
+            </div>
+
+        </div>
+            
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
